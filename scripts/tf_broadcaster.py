@@ -111,15 +111,15 @@ def sickrear_to_baselaser():
 
 if __name__ == '__main__':
     rospy.init_node('tf_broadcaster')
-    # rospy.Subscriber('odom',
-    #                  Odometry,
-    #                  odom_callback)
+    rospy.Subscriber('odom',
+                     Odometry,
+                     odom_callback)
     rate = rospy.Rate(20)
     while not rospy.is_shutdown():
         sickfront_to_baselaser()
         sickrear_to_baselaser()
         baselaser_to_baselink()
-        baselink_to_odom()
+        # baselink_to_odom()
         rate.sleep()
 
     rospy.spin()
