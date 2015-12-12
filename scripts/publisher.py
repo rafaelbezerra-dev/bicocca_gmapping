@@ -127,7 +127,7 @@ def publisher():
             publishLaserScan(header.lower(), msg)
         else:
             pass
-        rospy.loginfo('Publishing {} of 346838 '.format(counter))        
+        rospy.loginfo('Publishing {} of 346838 '.format(counter))
         counter += 1
         rate.sleep()
     f.close()

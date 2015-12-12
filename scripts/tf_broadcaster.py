@@ -24,6 +24,25 @@ def getQuaternion(roll = 0, pitch = 0, yaw = 0):
 #                      rospy.Time.now(),
 #                      'base_link',
 #                      'odom')
+
+def odom_callback(msg):
+    px = msg.pose.pose.position.x
+    py = msg.pose.pose.position.y
+    pz = msg.pose.pose.position.z
+
+    ox = msg.pose.pose.orientation.x
+    oy = msg.pose.pose.orientation.y
+    oz = msg.pose.pose.orientation.z
+    ow = msg.pose.pose.orientation.w
+    # rospy.loginfo('orientation[] x {}, y {}, z {}, w {}'.format(msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w))
+
+    br = tf.TransformBroadcaster()
+    br.sendTransform((px, py, pz),
+                     (ox, oy, oz, ow),
+                     rospy.Time.now(),
+                     'base_link',
+                     'odom')
+
 def baselink_to_odom():
     # frame_id: odom
     # child_frame_id: base_footprint
@@ -40,24 +59,6 @@ def baselink_to_odom():
     br = tf.TransformBroadcaster()
     br.sendTransform((0.0, 0.0, 0.0),
                      (0.0, 0.0, 0.0, 1.0),
-                     rospy.Time.now(),
-                     'base_link',
-                     'odom')
-
-def odom_callback(msg):
-    px = msg.pose.pose.position.x
-    py = msg.pose.pose.position.y
-    pz = msg.pose.pose.position.z
-
-    ox = msg.pose.pose.orientation.x
-    oy = msg.pose.pose.orientation.y
-    oz = msg.pose.pose.orientation.z
-    ow = msg.pose.pose.orientation.w
-    # rospy.loginfo('orientation[] x {}, y {}, z {}, w {}'.format(msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w))
-
-    br = tf.TransformBroadcaster()
-    br.sendTransform((px, py, pz),
-                     (ox, oy, oz, ow),
                      rospy.Time.now(),
                      'base_link',
                      'odom')
@@ -110,15 +111,15 @@ def sickrear_to_baselaser():
 
 if __name__ == '__main__':
     rospy.init_node('tf_broadcaster')
-    rospy.Subscriber('odom',
-                     Odometry,
-                     odom_callback)
+    # rospy.Subscriber('odom',
+    #                  Odometry,
+    #                  odom_callback)
     rate = rospy.Rate(20)
     while not rospy.is_shutdown():
         sickfront_to_baselaser()
         sickrear_to_baselaser()
         baselaser_to_baselink()
-        # baselink_to_odom()
+        baselink_to_odom()
         rate.sleep()
 
     rospy.spin()
